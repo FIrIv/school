@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.hogwarts.school.model.Faculty;
 import ru.hogwarts.school.service.FacultyService;
 
+import java.util.Collection;
 import java.util.List;
 
 @RestController
@@ -18,7 +19,7 @@ public class FacultyController {
 
     @PostMapping        // CREATE
     public ResponseEntity<Faculty> createFaculty (Faculty faculty) {
-        Faculty newFaculty = facultyService.createStudent(faculty);
+        Faculty newFaculty = facultyService.createFaculty(faculty);
         if (newFaculty == null) {
             return ResponseEntity.badRequest().build();
         }
@@ -27,11 +28,20 @@ public class FacultyController {
 
     @GetMapping("{id}")        // GET
     public ResponseEntity<Faculty> readFaculty (@PathVariable long id) {
-        Faculty faculty = facultyService.readStudent(id);
+        Faculty faculty = facultyService.readFaculty(id);
         if (faculty == null) {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok(faculty);
+    }
+
+    @GetMapping      // GET
+    public ResponseEntity<Collection<Faculty>> readAllFaculties () {
+        Collection<Faculty> faculties = facultyService.readAllFaculties();
+        if (faculties == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(faculties);
     }
 
     @GetMapping ("/filter")        // GET
@@ -45,7 +55,7 @@ public class FacultyController {
 
     @PutMapping     // UPDATE
     public ResponseEntity<Faculty> updateStudent (Faculty faculty) {
-        Faculty newFaculty = facultyService.updateStudent(faculty);
+        Faculty newFaculty = facultyService.updateFaculty(faculty);
         if (newFaculty == null) {
             return ResponseEntity.notFound().build();
         }
@@ -53,11 +63,8 @@ public class FacultyController {
     }
 
     @DeleteMapping ("{id}")     // DELETE
-    public ResponseEntity<Faculty> deleteStudent (@PathVariable long id) {
-        Faculty faculty = facultyService.deleteStudent(id);
-        if (faculty == null) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(faculty);
+    public ResponseEntity deleteFaculty (@PathVariable long id) {
+        facultyService.deleteFaculty(id);
+        return ResponseEntity.ok().build();
     }
 }
