@@ -20,7 +20,7 @@ public class StudentController {
     }
 
     @PostMapping        // CREATE
-    public ResponseEntity<Student> createStudent (Student student) {
+    public ResponseEntity<Student> createStudent (@RequestBody Student student) {
         Student newStudent = studentService.createStudent(student);
         if (newStudent == null) {
             return ResponseEntity.badRequest().build();
@@ -56,7 +56,7 @@ public class StudentController {
     }
 
     @PutMapping     // UPDATE
-    public ResponseEntity<Student> updateStudent (Student student) {
+    public ResponseEntity<Student> updateStudent (@RequestBody Student student) {
         Student newStudent = studentService.updateStudent(student);
         if (newStudent == null) {
             return ResponseEntity.notFound().build();
