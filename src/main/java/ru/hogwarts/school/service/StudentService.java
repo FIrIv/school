@@ -39,10 +39,11 @@ public class StudentService {
     }
 
     public List<Student> readStudentWithAge(int age) {
-        return studentRepository.findAll()
-                .stream()
-                .filter(e -> e.getAge() == age)
-                .collect(Collectors.toList());
+        return (List<Student>) studentRepository.findStudentsByAge(age);
+    }
+
+    public List<Student> readStudentsByAgeBetween(int ageMin, int ageMax) {
+        return (List<Student>) studentRepository.findStudentsByAgeIsBetween(ageMin, ageMax);
     }
 
     public Collection<Student> readAllStudents() {

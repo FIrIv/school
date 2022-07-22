@@ -46,7 +46,16 @@ public class FacultyController {
 
     @GetMapping ("/filter")        // GET
     public ResponseEntity<List<Faculty>> readFacultyWithColor (@RequestParam("color") String color) {
-        List<Faculty> faculties = facultyService.readFacultyWithAge(color);
+        List<Faculty> faculties = facultyService.readFacultyWithColor(color);
+        if (faculties == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(faculties);
+    }
+
+    @GetMapping ("/filter")        // GET
+    public ResponseEntity<List<Faculty>> readFacultyWithName (@RequestParam("name") String name) {
+        List<Faculty> faculties = facultyService.readFacultyWithName(name);
         if (faculties == null) {
             return ResponseEntity.notFound().build();
         }

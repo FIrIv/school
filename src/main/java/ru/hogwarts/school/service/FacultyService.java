@@ -38,13 +38,15 @@ public class FacultyService {
         facultyRepository.deleteById(id);
     }
 
-    public List<Faculty> readFacultyWithAge(String color) {
-        return facultyRepository.findAll().stream()
-                .filter(e -> e.getColor().equals(color))
-                .collect(Collectors.toList());
+    public List<Faculty> readFacultyWithColor(String color) {
+        return (List<Faculty>) facultyRepository.findFacultiesByColorIgnoreCase(color);
     }
 
     public Collection<Faculty> readAllFaculties() {
         return facultyRepository.findAll();
+    }
+
+    public List<Faculty> readFacultyWithName(String name) {
+        return (List<Faculty>) facultyRepository.findFacultiesByNameIgnoreCase(name);
     }
 }

@@ -55,6 +55,15 @@ public class StudentController {
         return ResponseEntity.ok(students);
     }
 
+    @GetMapping("/filter")         // GET
+    public ResponseEntity<List<Student>> findStudentsByAgeBetween(@RequestParam("agemin") int ageMin, @RequestParam("agemax") int ageMax) {
+        List<Student> students = studentService.readStudentsByAgeBetween(ageMin, ageMax);
+        if (students == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(students);
+    }
+
     @PutMapping     // UPDATE
     public ResponseEntity<Student> updateStudent (@RequestBody Student student) {
         Student newStudent = studentService.updateStudent(student);
