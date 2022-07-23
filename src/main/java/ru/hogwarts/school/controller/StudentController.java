@@ -8,6 +8,7 @@ import ru.hogwarts.school.service.StudentService;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("student")
@@ -38,30 +39,33 @@ public class StudentController {
     }
 
     @GetMapping      // GET
-    public ResponseEntity<Collection<Student>> readAllStudents () {
-        Collection<Student> students = studentService.readAllStudents();
+    public ResponseEntity<Collection<Student>> readAllOrFilterStudents (@RequestParam(required = false) Integer age,
+                                                                        @RequestParam(name = "minage", required = false) Integer ageMin,
+                                                                        @RequestParam(name = "maxage", required = false) Integer ageMax) {
+        Collection<Student> students;
+        if (age != null) {
+            students = studentService.readStudentWithAge(age);
+        } else if (ageMin != null && ageMax != null) {
+            students = studentService.readStudentsByAgeBetween(ageMin, ageMax);
+        } else {
+            students = studentService.readAllStudents();
+        }
         if (students == null) {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok(students);
     }
 
-    @GetMapping("/filter")         // GET
-    public ResponseEntity<List<Student>> readStudentWithAge (@RequestParam("age") int age) {
-        List<Student> students = studentService.readStudentWithAge(age);
-        if (students == null) {
+    @GetMapping     // GET
+    public ResponseEntity<Faculty> readFacultyByStudentId (@RequestParam("student_id") Long id) {
+        Faculty faculty = null;
+        if (id != null) {
+            faculty = studentService.findFacultyByStudentId(id);
+        }
+        if (faculty == null) {
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok(students);
-    }
-
-    @GetMapping("/filter")         // GET
-    public ResponseEntity<List<Student>> findStudentsByAgeBetween(@RequestParam("agemin") int ageMin, @RequestParam("agemax") int ageMax) {
-        List<Student> students = studentService.readStudentsByAgeBetween(ageMin, ageMax);
-        if (students == null) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(students);
+        return ResponseEntity.ok(faculty);
     }
 
     @PutMapping     // UPDATE

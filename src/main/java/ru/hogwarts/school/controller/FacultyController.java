@@ -3,10 +3,12 @@ package ru.hogwarts.school.controller;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.hogwarts.school.model.Faculty;
+import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.service.FacultyService;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("faculty")
@@ -36,30 +38,35 @@ public class FacultyController {
     }
 
     @GetMapping      // GET
-    public ResponseEntity<Collection<Faculty>> readAllFaculties () {
-        Collection<Faculty> faculties = facultyService.readAllFaculties();
+    public ResponseEntity<Collection<Faculty>> readAllOrFilterFaculties (@RequestParam(required = false) String color,
+                                                                         @RequestParam(required = false) String name) {
+        Collection<Faculty> faculties;
+        if (color!= null) {
+            faculties = facultyService.readFacultyWithColor(color);
+        } else if (name != null) {
+            faculties = facultyService.readFacultyWithName(name);
+        } else {
+            faculties = facultyService.readAllFaculties();
+        }
         if (faculties == null) {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok(faculties);
     }
 
-    @GetMapping ("/filter")        // GET
-    public ResponseEntity<List<Faculty>> readFacultyWithColor (@RequestParam("color") String color) {
-        List<Faculty> faculties = facultyService.readFacultyWithColor(color);
-        if (faculties == null) {
+    @GetMapping      // GET
+    public ResponseEntity<Collection<Student>> findStudentsByFaculty (@RequestParam (name = "faculty_id", required = false) Long id,
+                                                                      @RequestParam (name = "faculty_name", required = false) String name) {
+        Set<Student> students = null;
+        if (id != null) {
+            students = facultyService.findStudentsByFacultyId(id);
+        } else if (name != null && !name.isBlank()) {
+            students = facultyService.findStudentsByFacultyName(name);
+        }
+        if (students == null) {
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok(faculties);
-    }
-
-    @GetMapping ("/filter")        // GET
-    public ResponseEntity<List<Faculty>> readFacultyWithName (@RequestParam("name") String name) {
-        List<Faculty> faculties = facultyService.readFacultyWithName(name);
-        if (faculties == null) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(faculties);
+        return ResponseEntity.ok(students);
     }
 
     @PutMapping     // UPDATE

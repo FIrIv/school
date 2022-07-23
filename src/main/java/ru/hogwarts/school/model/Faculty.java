@@ -1,9 +1,8 @@
 package ru.hogwarts.school.model;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
 public class Faculty {
@@ -21,9 +20,19 @@ public class Faculty {
 
     public Faculty() {}
 
-
+    @OneToMany
+            (mappedBy = "faculty")
+    private Set<Student> students;
     public long getId() {
         return id;
+    }
+
+    public Set<Student> getStudents() {
+        return students;
+    }
+
+    public void setStudents(Set<Student> students) {
+        this.students = students;
     }
 
     public void setId (long id) {
