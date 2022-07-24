@@ -11,19 +11,19 @@ public class Student {
     private String name;
     private int age;
 
+    @ManyToOne
+    @JoinColumn (name = "faculty_id")
+    private Faculty faculty;
+
     public Student(long id, String name, int age, Faculty faculty) {
         this.id = id;
         this.name = name;
         this.age = age;
-        this.faculty = faculty;
+        this.faculty.setId(faculty.getId());
     }
 
-    public Student() { }
-
-    @ManyToOne
-    @JoinColumn
-            (name = "faculty_id")
-    private Faculty faculty;
+    public Student() {
+    }
 
     public Faculty getFaculty() {
         return faculty;

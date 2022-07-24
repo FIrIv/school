@@ -30,22 +30,36 @@ public class StudentController {
     }
 
     @GetMapping ("{id}")        // GET
-    public ResponseEntity<Student> readStudent (@PathVariable long id) {
-        Student student = studentService.readStudent(id);
+    public ResponseEntity<Student> readStudent (@RequestParam Long id) {
+        Student student = null;
+        if (id != null) {
+            student = studentService.readStudent(id);
+        }
         if (student == null) {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok(student);
     }
 
-    @GetMapping      // GET
-    public ResponseEntity<Collection<Student>> readAllOrFilterStudents (@RequestParam(required = false) Integer age,
-                                                                        @RequestParam(name = "minage", required = false) Integer ageMin,
-                                                                        @RequestParam(name = "maxage", required = false) Integer ageMax) {
-        Collection<Student> students;
+    @GetMapping("/age")      // GET
+    public ResponseEntity<Collection<Student>> readAllOrFilterStudents (@RequestParam Integer age) {
+        Collection<Student> students = null;
         if (age != null) {
             students = studentService.readStudentWithAge(age);
-        } else if (ageMin != null && ageMax != null) {
+        } else {
+            students = studentService.readAllStudents();
+        }
+        if (students == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(students);
+    }
+
+    @GetMapping("/agebetween")      // GET
+    public ResponseEntity<Collection<Student>> readAllOrFilterStudents (@RequestParam(name = "minage") Integer ageMin,
+                                                                        @RequestParam(name = "maxage") Integer ageMax) {
+        Collection<Student> students = null;
+        if (ageMin != null && ageMax != null) {
             students = studentService.readStudentsByAgeBetween(ageMin, ageMax);
         } else {
             students = studentService.readAllStudents();
@@ -56,8 +70,8 @@ public class StudentController {
         return ResponseEntity.ok(students);
     }
 
-    @GetMapping     // GET
-    public ResponseEntity<Faculty> readFacultyByStudentId (@RequestParam("student_id") Long id) {
+    @GetMapping ("/faculty")    // GET
+    public ResponseEntity<Faculty> readFacultyByStudentId (@RequestParam(name = "student_id") Long id) {
         Faculty faculty = null;
         if (id != null) {
             faculty = studentService.findFacultyByStudentId(id);
@@ -78,7 +92,7 @@ public class StudentController {
     }
 
     @DeleteMapping("{id}")      // DELETE
-    public ResponseEntity deleteStudent (@PathVariable long id) {
+    public ResponseEntity deleteStudent (@RequestParam long id) {
         studentService.deleteStudent(id);
         return ResponseEntity.ok().build();
     }

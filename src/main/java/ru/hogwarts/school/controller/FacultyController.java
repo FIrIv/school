@@ -29,18 +29,21 @@ public class FacultyController {
     }
 
     @GetMapping("{id}")        // GET
-    public ResponseEntity<Faculty> readFaculty (@PathVariable long id) {
-        Faculty faculty = facultyService.readFaculty(id);
+    public ResponseEntity<Faculty> readFaculty (@RequestParam Long id) {
+        Faculty faculty = null;
+        if (id != null) {
+            faculty = facultyService.readFaculty(id);
+        }
         if (faculty == null) {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok(faculty);
     }
 
-    @GetMapping      // GET
+    @GetMapping("/filter")      // GET
     public ResponseEntity<Collection<Faculty>> readAllOrFilterFaculties (@RequestParam(required = false) String color,
                                                                          @RequestParam(required = false) String name) {
-        Collection<Faculty> faculties;
+        Collection<Faculty> faculties = null;
         if (color!= null) {
             faculties = facultyService.readFacultyWithColor(color);
         } else if (name != null) {
@@ -54,9 +57,9 @@ public class FacultyController {
         return ResponseEntity.ok(faculties);
     }
 
-    @GetMapping      // GET
-    public ResponseEntity<Collection<Student>> findStudentsByFaculty (@RequestParam (name = "faculty_id", required = false) Long id,
-                                                                      @RequestParam (name = "faculty_name", required = false) String name) {
+    @GetMapping("/students")      // GET
+    public ResponseEntity<Collection<Student>> findStudentsByFaculty (@RequestParam(required = false, name = "faculty_id") Long id,
+                                                                      @RequestParam(required = false, name = "faculty_name") String name) {
         Set<Student> students = null;
         if (id != null) {
             students = facultyService.findStudentsByFacultyId(id);
@@ -79,7 +82,7 @@ public class FacultyController {
     }
 
     @DeleteMapping ("{id}")     // DELETE
-    public ResponseEntity deleteFaculty (@PathVariable long id) {
+    public ResponseEntity deleteFaculty (@RequestParam long id) {
         facultyService.deleteFaculty(id);
         return ResponseEntity.ok().build();
     }
