@@ -12,6 +12,7 @@ import java.nio.file.Path;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import ru.hogwarts.school.exception.AvatarNotFoundException;
 import ru.hogwarts.school.model.Avatar;
 import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.repository.AvatarRepository;
@@ -31,7 +32,7 @@ public class AvatarService {
         }
 
     public Avatar findAvatar(long studentId) {
-        return avatarRepository.findByStudentId(studentId).orElseThrow();
+        return avatarRepository.findByStudentId(studentId).orElseThrow(AvatarNotFoundException::new);
     }
 
     public void uploadAvatar(Long studentId, MultipartFile file) throws IOException {
