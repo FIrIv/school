@@ -9,24 +9,19 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import ru.hogwarts.school.controller.FacultyController;
 import ru.hogwarts.school.model.Faculty;
 import ru.hogwarts.school.repository.FacultyRepository;
 import ru.hogwarts.school.service.FacultyService;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
-import static org.hamcrest.Matchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest (controllers = FacultyController.class)
 public class SchoolApplicationTestMvc {
@@ -115,15 +110,15 @@ public class SchoolApplicationTestMvc {
         String name2 = "Dance";
         Faculty expected2 = new Faculty(id2, name2, color);
 
-        when(facultyRepository.findFacultiesByColorIgnoreCase(eq(color))).thenReturn(Set.of(expected1, expected2));
+        when(facultyRepository.findFacultiesByColorIgnoreCase(eq(color))).thenReturn(List.of(expected1, expected2));
 
         mockMvc.perform(MockMvcRequestBuilders
-                        .get("/faculty/filter?color=" + color)
+                        .get("/faculty/filter")
                         .queryParam("color", color)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect((ResultMatcher) content().json(objectMapper.writeValueAsString(List.of(expected1, expected2))));
+                .andExpect(content().json(objectMapper.writeValueAsString(List.of(expected1, expected2))));
     }
 
     @Test
@@ -137,15 +132,15 @@ public class SchoolApplicationTestMvc {
         String color2 = "Silver";
         Faculty expected2 = new Faculty(id2, name, color2);
 
-        when(facultyRepository.findFacultiesByNameIgnoreCase(eq(name))).thenReturn(Set.of(expected1, expected2));
+        when(facultyRepository.findFacultiesByNameIgnoreCase(eq(name))).thenReturn(List.of(expected1, expected2));
 
         mockMvc.perform(MockMvcRequestBuilders
-                        .get("/faculty/filer?name=" + name)
+                        .get("/faculty/filter")
                         .queryParam("name", name)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect((ResultMatcher) content().json(objectMapper.writeValueAsString(Set.of(expected1, expected2))));
+                .andExpect(content().json(objectMapper.writeValueAsString(List.of(expected1, expected2))));
     }
 
     @Test
@@ -182,18 +177,10 @@ public class SchoolApplicationTestMvc {
         String color = "Gold";
         Faculty expected = new Faculty(id, name, color);
 
-       /* JSONObject facultyObject = new JSONObject();
-        facultyObject.put("id", id);
-        facultyObject.put("name", name);
-        facultyObject.put("color", color);*/
-
-        //when(facultyRepository.findById(eq(id))).thenReturn(Optional.of(expected));
-        //when(facultyRepository.findFacultyById(eq(id))).thenReturn(expected);
+        doNothing().when(facultyRepository).deleteById(eq(id));
 
         mockMvc.perform(MockMvcRequestBuilders
                         .delete("/faculty/" + id)
-                        //.content(facultyObject.toString())
-                        //.contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
     }
