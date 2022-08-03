@@ -45,7 +45,7 @@ public class StudentController {
     }
 
     @GetMapping ("{id}")        // GET
-    public ResponseEntity<Student> readStudent (@RequestParam Long id) {
+    public ResponseEntity<Student> readStudent (@PathVariable Long id) {
         Student student = null;
         if (id != null) {
             student = studentService.readStudent(id);
@@ -107,7 +107,7 @@ public class StudentController {
     }
 
     @DeleteMapping("{id}")      // DELETE
-    public ResponseEntity deleteStudent (@RequestParam long id) {
+    public ResponseEntity deleteStudent (@PathVariable long id) {
         studentService.deleteStudent(id);
         return ResponseEntity.ok().build();
     }
