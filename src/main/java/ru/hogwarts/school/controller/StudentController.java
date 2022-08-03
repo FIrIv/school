@@ -44,6 +44,15 @@ public class StudentController {
         return ResponseEntity.ok(newStudent);
     }
 
+    @GetMapping         // GET
+    public ResponseEntity<Collection<Student>> readStudents () {
+        Collection<Student> students = studentService.readAllStudents();
+        if (students == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(students);
+    }
+
     @GetMapping ("{id}")        // GET
     public ResponseEntity<Student> readStudent (@PathVariable Long id) {
         Student student = null;
@@ -146,5 +155,25 @@ public class StudentController {
             response.setContentLength((int) avatar.getFileSize());
             is.transferTo(os);
         }
+    }
+
+    @GetMapping(value = "/count")
+    public ResponseEntity<Integer> getCountOfStudents() {
+        return ResponseEntity.ok(studentService.getCountOfStudents());
+    }
+
+    @GetMapping(value = "/age/average")
+    public ResponseEntity<Integer> getAverageAgeOfStudents() {
+        return ResponseEntity.ok(studentService.getAverageAgeOfStudents());
+    }
+
+    @GetMapping(value = "/lastfive")
+    public ResponseEntity<Collection<Student>> getFiveLastStudents() {
+        Collection<Student> students;
+        students = studentService.getFiveLastStudents();
+        if (students == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(students);
     }
 }
