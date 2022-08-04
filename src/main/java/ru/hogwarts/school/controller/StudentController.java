@@ -1,11 +1,13 @@
 package ru.hogwarts.school.controller;
 
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.hogwarts.school.model.Faculty;
 import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.service.StudentService;
 
+import java.awt.print.Pageable;
 import java.util.Collection;
 import java.io.IOException;
 import java.io.InputStream;
@@ -42,6 +44,11 @@ public class StudentController {
             return ResponseEntity.badRequest().build();
         }
         return ResponseEntity.ok(newStudent);
+    }
+
+    @GetMapping         // GET
+    public ResponseEntity<Collection<Student>> readStudents () {
+        return ResponseEntity.ok(studentService.readAllStudents());
     }
 
     @GetMapping ("{id}")        // GET
@@ -146,5 +153,27 @@ public class StudentController {
             response.setContentLength((int) avatar.getFileSize());
             is.transferTo(os);
         }
+    }
+
+    @GetMapping(value = "/count")
+    public ResponseEntity<Integer> getCountOfStudents() {
+        return ResponseEntity.ok(studentService.getCountOfStudents());
+    }
+
+    @GetMapping(value = "/age/average")
+    public ResponseEntity<Double> getAverageAgeOfStudents() {
+        return ResponseEntity.ok(studentService.getAverageAgeOfStudents());
+    }
+
+    @GetMapping(value = "/lastfive")
+    public ResponseEntity<Collection<Student>> getFiveLastStudents() {
+        return ResponseEntity.ok(studentService.getFiveLastStudents());
+    }
+
+    @GetMapping(value = "/avatar/getAll")
+    public ResponseEntity<Collection<Avatar>> getFiveAvatarsByPage (@RequestParam int page) {
+        Collection<Avatar> avatars;
+        PageRequest pageRequest = PageRequest.of(page-1, 5);
+        return ResponseEntity.ok(studentService.getAllAvatars(pageRequest));
     }
 }

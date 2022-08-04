@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import ru.hogwarts.school.controller.StudentController;
 import ru.hogwarts.school.model.Student;
 
+import java.util.Collection;
 import java.util.List;
 
 import static org.assertj.core.internal.bytebuddy.matcher.ElementMatchers.is;
@@ -154,5 +155,31 @@ public class SchoolApplicationTestRestTemplate {
         ResponseEntity<Student> response = restTemplate.exchange("/student/{id}", HttpMethod.DELETE, null,
                 Student.class, id);
         Assertions.assertThat(response.getStatusCode()).isEqualByComparingTo(HttpStatus.OK);
+    }
+
+    @Test
+    public void testCountStudents() throws Exception {
+        int count = studentController.readStudents().getBody().size();
+
+        ResponseEntity<Integer> response = restTemplate.exchange("/student/count", HttpMethod.GET, null,
+                Integer.class);
+        Assertions.assertThat(response.getStatusCode()).isEqualByComparingTo(HttpStatus.OK);
+        Assertions.assertThat(response.getBody()).isEqualTo(count);
+    }
+
+    @Test
+    public void testGetAverageAgeOfStudents() throws Exception {
+        int count = studentController.readStudents().getBody().size();
+        double sum = 0;
+        List<Student> students = studentController.readStudents().getBody().stream().toList();
+        for (int i=0; i<count; i++) {
+            sum += students.get(i).getAge();
+        }
+        double avAge = sum / (double)count;
+
+        ResponseEntity<Double> response = restTemplate.exchange("/student/age/average", HttpMethod.GET, null,
+                Double.class);
+        Assertions.assertThat(response.getStatusCode()).isEqualByComparingTo(HttpStatus.OK);
+        Assertions.assertThat(response.getBody()).isEqualTo(avAge);
     }
 }
