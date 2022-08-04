@@ -1,11 +1,13 @@
 package ru.hogwarts.school.controller;
 
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.hogwarts.school.model.Faculty;
 import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.service.StudentService;
 
+import java.awt.print.Pageable;
 import java.util.Collection;
 import java.io.IOException;
 import java.io.InputStream;
@@ -175,5 +177,16 @@ public class StudentController {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok(students);
+    }
+
+    @GetMapping(value = "/avatar/getAll")
+    public ResponseEntity<Collection<Avatar>> getFiveAvatarsByPage (@RequestParam int page) {
+        Collection<Avatar> avatars;
+        PageRequest pageRequest = PageRequest.of(page-1, 5);
+        avatars = studentService.getAllAvatars(pageRequest);
+        if (avatars == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(avatars);
     }
 }

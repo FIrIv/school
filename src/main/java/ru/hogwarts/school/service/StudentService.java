@@ -2,6 +2,7 @@ package ru.hogwarts.school.service;
 
 import static java.nio.file.StandardOpenOption.CREATE_NEW;
 
+import java.awt.print.Pageable;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.IOException;
@@ -13,6 +14,7 @@ import java.util.Collection;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import ru.hogwarts.school.model.Avatar;
@@ -115,5 +117,9 @@ public class StudentService {
 
     public Collection<Student> getFiveLastStudents() {
         return studentRepository.getFiveLastStudents();
+    }
+
+    public List<Avatar> getAllAvatars(PageRequest pageRequest) {
+        return avatarRepository.findAll(pageRequest).getContent();
     }
 }
