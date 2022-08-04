@@ -48,11 +48,7 @@ public class StudentController {
 
     @GetMapping         // GET
     public ResponseEntity<Collection<Student>> readStudents () {
-        Collection<Student> students = studentService.readAllStudents();
-        if (students == null) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(students);
+        return ResponseEntity.ok(studentService.readAllStudents());
     }
 
     @GetMapping ("{id}")        // GET
@@ -165,28 +161,19 @@ public class StudentController {
     }
 
     @GetMapping(value = "/age/average")
-    public ResponseEntity<Integer> getAverageAgeOfStudents() {
+    public ResponseEntity<Double> getAverageAgeOfStudents() {
         return ResponseEntity.ok(studentService.getAverageAgeOfStudents());
     }
 
     @GetMapping(value = "/lastfive")
     public ResponseEntity<Collection<Student>> getFiveLastStudents() {
-        Collection<Student> students;
-        students = studentService.getFiveLastStudents();
-        if (students == null) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(students);
+        return ResponseEntity.ok(studentService.getFiveLastStudents());
     }
 
     @GetMapping(value = "/avatar/getAll")
     public ResponseEntity<Collection<Avatar>> getFiveAvatarsByPage (@RequestParam int page) {
         Collection<Avatar> avatars;
         PageRequest pageRequest = PageRequest.of(page-1, 5);
-        avatars = studentService.getAllAvatars(pageRequest);
-        if (avatars == null) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(avatars);
+        return ResponseEntity.ok(studentService.getAllAvatars(pageRequest));
     }
 }

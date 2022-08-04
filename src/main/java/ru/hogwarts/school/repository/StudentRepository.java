@@ -17,9 +17,8 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
     @Query(value = "SELECT COUNT (*) FROM student", nativeQuery = true)
     Integer getCountOfStudents();
 
-    // пусть округляет средний возраст до целого
     @Query(value = "SELECT AVG(age) FROM student", nativeQuery = true)
-    Integer getAverageAgeOfStudents();
+    Double getAverageAgeOfStudents();
 
     @Query(value = "SELECT * FROM student ORDER BY id DESC LIMIT 5", nativeQuery = true)
     List<Student> getFiveLastStudents();

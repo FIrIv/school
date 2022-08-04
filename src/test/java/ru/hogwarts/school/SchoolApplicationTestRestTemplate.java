@@ -170,15 +170,15 @@ public class SchoolApplicationTestRestTemplate {
     @Test
     public void testGetAverageAgeOfStudents() throws Exception {
         int count = studentController.readStudents().getBody().size();
-        int sum = 0;
+        double sum = 0;
         List<Student> students = studentController.readStudents().getBody().stream().toList();
         for (int i=0; i<count; i++) {
             sum += students.get(i).getAge();
         }
-        int avAge = sum / count;
+        double avAge = sum / (double)count;
 
-        ResponseEntity<Integer> response = restTemplate.exchange("/student/age/average", HttpMethod.GET, null,
-                Integer.class);
+        ResponseEntity<Double> response = restTemplate.exchange("/student/age/average", HttpMethod.GET, null,
+                Double.class);
         Assertions.assertThat(response.getStatusCode()).isEqualByComparingTo(HttpStatus.OK);
         Assertions.assertThat(response.getBody()).isEqualTo(avAge);
     }
