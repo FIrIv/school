@@ -1,6 +1,6 @@
 -- liquibase formatted sql
 
--- changeset firiv:1
+-- changeSet firiv:1
 
 CREATE INDEX student_name ON student (name);
 
