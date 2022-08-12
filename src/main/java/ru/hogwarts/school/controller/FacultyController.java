@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Set;
 
 @RestController
-@RequestMapping("faculty")
+@RequestMapping("/faculty")
 public class FacultyController {
     private final FacultyService facultyService;
 

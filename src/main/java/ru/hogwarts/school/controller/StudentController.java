@@ -28,7 +28,7 @@ import org.springframework.web.multipart.MultipartFile;
 import ru.hogwarts.school.model.Avatar;
 
 @RestController
-@RequestMapping("student")
+@RequestMapping("/student")
 public class StudentController {
 
     private final StudentService studentService;
