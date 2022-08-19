@@ -77,7 +77,18 @@ public class StudentController {
         return ResponseEntity.ok(students);
     }
 
-    @GetMapping("/agebetween")      // GET
+    @GetMapping("/namestartswith")      // GET
+    public ResponseEntity<Collection<Student>> readAllStudentsWithNameStartsWith (@RequestParam String letter) {
+        Collection<Student> students;
+        if (letter != null) {
+            students = studentService.readAllStudentsWithNameStartsWith(letter);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(students);
+    }
+
+    @GetMapping("/age/between")      // GET
     public ResponseEntity<Collection<Student>> readAllOrFilterStudents (@RequestParam(name = "minage") Integer ageMin,
                                                                         @RequestParam(name = "maxage") Integer ageMax) {
         Collection<Student> students;

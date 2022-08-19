@@ -15,6 +15,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
@@ -138,7 +139,11 @@ public class StudentService {
 
     public Double getAverageAgeOfStudents() {
         logger.info("Was invoked method to get average age of students. ");
-        return studentRepository.getAverageAgeOfStudents();
+        //return studentRepository.getAverageAgeOfStudents();
+        return studentRepository.findAll()
+                .stream().mapToInt(p -> p.getAge())
+                .average()
+                .getAsDouble();
     }
 
     public Collection<Student> getFiveLastStudents() {
@@ -149,5 +154,13 @@ public class StudentService {
     public List<Avatar> getAllAvatars(PageRequest pageRequest) {
         logger.info("Was invoked method to get all avatars. ");
         return avatarRepository.findAll(pageRequest).getContent();
+    }
+
+    public Collection<Student> readAllStudentsWithNameStartsWith(String letter) {
+        logger.info("Was invoked method to get all names of students starts with letters {}. ", letter);
+        return studentRepository.findAll()
+                .stream()
+                .filter(p -> p.getName().toUpperCase().startsWith(letter.toUpperCase()))
+                .collect(Collectors.toList());
     }
 }
