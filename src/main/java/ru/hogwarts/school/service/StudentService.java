@@ -165,4 +165,50 @@ public class StudentService {
                 .sorted()
                 .collect(Collectors.toList());
     }
+
+    public void testThreads() {
+        System.out.println(studentRepository.findStudentById(0L));
+        System.out.println(studentRepository.findStudentById(1L));
+
+        new Thread (() -> {
+            System.out.println(studentRepository.findStudentById(2L));
+            pause();
+            System.out.println(studentRepository.findStudentById(3L));
+            pause();
+        }).start();
+
+        new Thread (() -> {
+            System.out.println(studentRepository.findStudentById(4L));
+            pause();
+            System.out.println(studentRepository.findStudentById(5L));
+            pause();
+        }).start();
+    }
+
+    private void pause() {
+      String s="";
+      for (int i=0; i<50_000; i++) {
+          s += i;
+      }
+    }
+
+    public void testSynchronizedThreads() {
+        printName(0L);
+        printName(1L);
+
+        new Thread (() -> {
+            printName(2L);
+            printName(3L);
+        }).start();
+
+        new Thread (() -> {
+            printName(4L);
+            printName(5L);
+        }).start();
+    }
+
+    private synchronized void printName (Long id) {
+        System.out.println(studentRepository.findStudentById(id));
+        pause();
+    }
 }
