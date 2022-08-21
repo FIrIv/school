@@ -84,7 +84,7 @@ public class FacultyService {
                 .stream()
                 .mapToInt(p -> p.getName().length())
                 .max()
-                .orElseThrow();
+                .orElseThrow(facultyNotFoundException("Факультеты не найдены. "));
         return facultyRepository.findAll()
                 .stream()
                 .filter(p -> p.getName().length() == maxLengthOfName)

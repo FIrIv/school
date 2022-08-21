@@ -60,9 +60,6 @@ public class FacultyController {
     @GetMapping("/filter/longest-name-of-faculty")      // GET
     public ResponseEntity<Set<Faculty>> findLongestNameOfFaculty () {
         Set<Faculty> namesOfFaculties = facultyService.findLongestNameOfFaculty();
-        if (namesOfFaculties == null) {
-            return ResponseEntity.notFound().build();
-        }
         return ResponseEntity.ok(namesOfFaculties);
     }
 

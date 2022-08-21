@@ -143,7 +143,7 @@ public class StudentService {
         return studentRepository.findAll()
                 .stream().mapToInt(p -> p.getAge())
                 .average()
-                .getAsDouble();
+                .orElseThrow(studentNotFoundException("Студенты не найдены. "));
     }
 
     public Collection<Student> getFiveLastStudents() {
@@ -156,11 +156,13 @@ public class StudentService {
         return avatarRepository.findAll(pageRequest).getContent();
     }
 
-    public Collection<Student> readAllStudentsWithNameStartsWith(String letter) {
+    public List<String> readAllStudentsWithNameStartsWith(String letter) {
         logger.info("Was invoked method to get all names of students starts with letters {}. ", letter);
         return studentRepository.findAll()
                 .stream()
                 .filter(p -> p.getName().toUpperCase().startsWith(letter.toUpperCase()))
+                .map(p -> p.getName().toUpperCase())
+                .sorted()
                 .collect(Collectors.toList());
     }
 }

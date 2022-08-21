@@ -14,6 +14,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -78,13 +79,8 @@ public class StudentController {
     }
 
     @GetMapping("/namestartswith")      // GET
-    public ResponseEntity<Collection<Student>> readAllStudentsWithNameStartsWith (@RequestParam String letter) {
-        Collection<Student> students;
-        if (letter != null) {
-            students = studentService.readAllStudentsWithNameStartsWith(letter);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+    public ResponseEntity<List<String>> readAllStudentsWithNameStartsWith (@RequestParam String letter) {
+        List<String> students = studentService.readAllStudentsWithNameStartsWith(letter);
         return ResponseEntity.ok(students);
     }
 
