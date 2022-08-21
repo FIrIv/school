@@ -10,6 +10,7 @@ import ru.hogwarts.school.repository.FacultyRepository;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static ru.hogwarts.school.exception.FacultyNotFoundException.facultyNotFoundException;
 
@@ -75,5 +76,18 @@ public class FacultyService {
     public Set<Student> findStudentsByFacultyName(String facultyName) {
         logger.info("Was invoked method to read all students by faculty name {}. ", facultyName);
         return facultyRepository.findFacultyByName(facultyName).getStudents();
+    }
+
+    public Set<Faculty> findLongestNameOfFaculty() {
+        logger.info("Was invoked method to find the longest names of faculties. ");
+        int maxLengthOfName = facultyRepository.findAll()
+                .stream()
+                .mapToInt(p -> p.getName().length())
+                .max()
+                .orElseThrow(facultyNotFoundException("Факультеты не найдены. "));
+        return facultyRepository.findAll()
+                .stream()
+                .filter(p -> p.getName().length() == maxLengthOfName)
+                .collect(Collectors.toSet());
     }
 }

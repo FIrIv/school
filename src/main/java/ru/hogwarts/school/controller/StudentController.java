@@ -14,6 +14,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -77,7 +78,13 @@ public class StudentController {
         return ResponseEntity.ok(students);
     }
 
-    @GetMapping("/agebetween")      // GET
+    @GetMapping("/namestartswith")      // GET
+    public ResponseEntity<List<String>> readAllStudentsWithNameStartsWith (@RequestParam String letter) {
+        List<String> students = studentService.readAllStudentsWithNameStartsWith(letter);
+        return ResponseEntity.ok(students);
+    }
+
+    @GetMapping("/age/between")      // GET
     public ResponseEntity<Collection<Student>> readAllOrFilterStudents (@RequestParam(name = "minage") Integer ageMin,
                                                                         @RequestParam(name = "maxage") Integer ageMax) {
         Collection<Student> students;
