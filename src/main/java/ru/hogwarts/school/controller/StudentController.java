@@ -90,7 +90,7 @@ public class StudentController {
     }
 
     @GetMapping("/test/sync-threads")      // GET
-    public void testSynchronizedThreads () {
+    public void testSynchronizedThreads () throws InterruptedException {
         studentService.testSynchronizedThreads();
     }
 

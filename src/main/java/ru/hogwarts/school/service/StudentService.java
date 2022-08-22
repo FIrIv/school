@@ -1,5 +1,6 @@
 package ru.hogwarts.school.service;
 
+import static java.lang.Thread.sleep;
 import static java.nio.file.StandardOpenOption.CREATE_NEW;
 import static ru.hogwarts.school.exception.AvatarNotFoundException.avatarNotFoundException;
 import static ru.hogwarts.school.exception.StudentNotFoundException.studentNotFoundException;
@@ -13,8 +14,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -167,48 +167,68 @@ public class StudentService {
     }
 
     public void testThreads() {
-        System.out.println(studentRepository.findStudentById(0L));
-        System.out.println(studentRepository.findStudentById(1L));
+        List<Student> tempListOfStudents = new ArrayList<>();
+        for (long i=0L; i<6L; i++) {
+            tempListOfStudents.add(studentRepository.findStudentById(i));
+        }
+
+        System.out.println();
+        System.out.println("Потоки: ");
+        System.out.println();
+
+        System.out.println(tempListOfStudents.get(0));
+        pause(3_000);
+        System.out.println(tempListOfStudents.get(1));
+        pause(3_000);
 
         new Thread (() -> {
-            System.out.println(studentRepository.findStudentById(2L));
-            pause();
-            System.out.println(studentRepository.findStudentById(3L));
-            pause();
+            System.out.println(tempListOfStudents.get(2));
+            pause(3_000);
+            System.out.println(tempListOfStudents.get(3));
+            pause(3_000);
         }).start();
 
         new Thread (() -> {
-            System.out.println(studentRepository.findStudentById(4L));
-            pause();
-            System.out.println(studentRepository.findStudentById(5L));
-            pause();
-        }).start();
-    }
-
-    private void pause() {
-      String s="";
-      for (int i=0; i<50_000; i++) {
-          s += i;
-      }
-    }
-
-    public void testSynchronizedThreads() {
-        printName(0L);
-        printName(1L);
-
-        new Thread (() -> {
-            printName(2L);
-            printName(3L);
-        }).start();
-
-        new Thread (() -> {
-            printName(4L);
-            printName(5L);
+            System.out.println(tempListOfStudents.get(4));
+            pause(3_000);
+            System.out.println(tempListOfStudents.get(5));
+            pause(3_000);
         }).start();
     }
 
-    private synchronized void printName (Long id) {
-        System.out.println(studentRepository.findStudentById(id));
-        pause();
+    private void pause (int time) {
+        try {
+            sleep(time);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void testSynchronizedThreads() throws InterruptedException {
+        System.out.println();
+        System.out.println("Синхронизированные потоки: ");
+        System.out.println();
+
+        List<Student> tempListOfStudents = new ArrayList<>();
+        for (long i=0L; i<6L; i++) {
+            tempListOfStudents.add(studentRepository.findStudentById(i));
+        }
+
+        printName(tempListOfStudents.subList(0, 1+1));
+
+        new Thread (() -> {
+                printName(tempListOfStudents.subList(2, 3+1));
+        }).start();
+
+        new Thread (() -> {
+                printName(tempListOfStudents.subList(4, 5+1));
+        }).start();
+    }
+
+    private synchronized void printName (List<Student> sublistOfStudents) {
+        for (int i=0; i<sublistOfStudents.size(); i++) {
+            System.out.println(sublistOfStudents.get(i));
+        }
+        pause(3000);
     }
 }
