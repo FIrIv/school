@@ -84,6 +84,16 @@ public class StudentController {
         return ResponseEntity.ok(students);
     }
 
+    @GetMapping("/test/threads")      // GET
+    public void testThreads () {
+        studentService.testThreads();
+    }
+
+    @GetMapping("/test/sync-threads")      // GET
+    public void testSynchronizedThreads () throws InterruptedException {
+        studentService.testSynchronizedThreads();
+    }
+
     @GetMapping("/age/between")      // GET
     public ResponseEntity<Collection<Student>> readAllOrFilterStudents (@RequestParam(name = "minage") Integer ageMin,
                                                                         @RequestParam(name = "maxage") Integer ageMax) {
