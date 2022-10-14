@@ -1,8 +1,11 @@
 package ru.hogwarts.school.service;
 
 import static java.nio.file.StandardOpenOption.CREATE_NEW;
+import static ru.hogwarts.school.exception.AvatarNotFoundException.avatarNotFoundException;
+import static ru.hogwarts.school.exception.StudentNotFoundException.studentNotFoundException;
 
-import java.awt.print.Pageable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.IOException;
@@ -31,65 +34,85 @@ public class StudentService {
     private final StudentRepository studentRepository;
     private final AvatarRepository avatarRepository;
 
+    private final Logger logger = LoggerFactory.getLogger(StudentService.class);
+
     public StudentService(StudentRepository studentRepository, AvatarRepository avatarRepository) {
         this.studentRepository = studentRepository;
         this.avatarRepository = avatarRepository;
     }
 
     public Student createStudent (Student student) {
+        logger.info("Was invoked method for create student. ");
         if (student == null) {
+            logger.error("There is no student to add. ");
             return null;
         }
         return studentRepository.save(student);
     }
 
     public Student readStudent (long id) {
-        return studentRepository.findById(id).orElseThrow();
+        logger.info("Was invoked method for read student with id {}. ", id);
+        return studentRepository.findById(id)
+                .orElseThrow(studentNotFoundException("Студент с id {} не найден. ", id));
     }
 
     public Student updateStudent (Student student) {
+        logger.info("Was invoked method for update student with id {}. ", student.getId());
         if (student == null) {
+            logger.error("There is no student to update. ");
             return null;
         }
         return studentRepository.save(student);
     }
 
     public void deleteStudent (long id) {
+        logger.info("Was invoked method for delete student with id {}. ", id);
         studentRepository.deleteById(id);
     }
 
     public List<Student> readStudentWithAge(int age) {
+        logger.info("Was invoked method for read student with age {}. ", age);
         return (List<Student>) studentRepository.findStudentsByAge(age);
     }
 
     public List<Student> readStudentsByAgeBetween(int ageMin, int ageMax) {
+        logger.info("Was invoked method for read student with age between {} and {}. ", ageMin, ageMax);
         return (List<Student>) studentRepository.findStudentsByAgeIsBetween(ageMin, ageMax);
     }
 
     public Collection<Student> readAllStudents() {
+        logger.info("Was invoked method for read all students. ");
         return studentRepository.findAll();
     }
 
     public Faculty findFacultyByStudentId(Long studentId) {
+        logger.info("Was invoked method for read faculty of student with id {}. ", studentId);
         return studentRepository.findStudentById(studentId).getFaculty();
     }
 
     public Avatar findAvatar(long studentId) {
-        return avatarRepository.findByStudentId(studentId).orElseThrow();
+        logger.info("Was invoked method to get avatar of student with id {}. ", studentId);
+        return avatarRepository.findByStudentId(studentId)
+                .orElseThrow(avatarNotFoundException("Аватар для студент с id {} не найден. ", studentId));
     }
 
     public void uploadAvatar(Long studentId, MultipartFile file) throws IOException {
-        Student student = studentRepository.findById(studentId).orElseThrow();
+        logger.info("Was invoked method to upload avatar to student with id {}. ", studentId);
+        Student student = studentRepository.findById(studentId)
+                .orElseThrow(studentNotFoundException("Студент с id {} не найден. ", studentId));
 
         Path filePath = Path.of(avatarsDir, studentId + "." + getExtension(file.getOriginalFilename()));
         Files.createDirectories(filePath.getParent());
         Files.deleteIfExists(filePath);
 
-        try (InputStream is = file.getInputStream();
+        logger.debug("Try to create buffer... ");
+        try (
+             InputStream is = file.getInputStream();
              OutputStream os = Files.newOutputStream(filePath, CREATE_NEW);
              BufferedInputStream bis = new BufferedInputStream(is, 1024);
              BufferedOutputStream bos = new BufferedOutputStream(os, 1024);
         ) {
+            logger.debug("It is buffering successful. ");
             bis.transferTo(bos);
         }
 
@@ -104,22 +127,27 @@ public class StudentService {
     }
 
     private String getExtension(String fileName) {
-        return fileName.substring(fileName.lastIndexOf(".") + 1);
+        logger.info("Was invoked method to get extension of file. ");
+        return fileName.substring(fileName.lastIndexOf(").") + 1);
     }
 
     public Integer getCountOfStudents() {
+        logger.info("Was invoked method to get extension of file. ");
         return studentRepository.getCountOfStudents();
     }
 
     public Double getAverageAgeOfStudents() {
+        logger.info("Was invoked method to get average age of students. ");
         return studentRepository.getAverageAgeOfStudents();
     }
 
     public Collection<Student> getFiveLastStudents() {
+        logger.info("Was invoked method to get last five students. ");
         return studentRepository.getFiveLastStudents();
     }
 
     public List<Avatar> getAllAvatars(PageRequest pageRequest) {
+        logger.info("Was invoked method to get all avatars. ");
         return avatarRepository.findAll(pageRequest).getContent();
     }
 }
